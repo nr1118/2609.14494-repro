@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import neost
 from neost.eos import polytropes
 from neost.Prior import Prior
@@ -12,14 +6,10 @@ from neost.Likelihood import Likelihood
 from neost import PosteriorAnalysis
 from scipy.stats import multivariate_normal, gaussian_kde
 import numpy as np
-import matplotlib
-from scipy.interpolate import UnivariateSpline
-from matplotlib import pyplot
 from pymultinest.solve import solve
 import time
 import os
 import pathlib
-import corner as corner
 
 
 # In[ ]:
@@ -38,11 +28,6 @@ eos_name = 'polytropes'
 
 
 EOS = polytropes.PolytropicEoS(crust = 'ceft-Keller-N3LO', rho_t = 1.5*rho_ns, adm_type = 'Bosonic')
-
-
-# EOS.plot()
-# EOS.plot_massradius()
-# Here we implement old NICER data on J0740 and J0030 from Riley et al.
 
 
 # Create the likelihoods for the individual measurements
@@ -65,22 +50,21 @@ chirp_mass = [None,None,None]
 number_stars = len(chirp_mass)
 
 run_name = "Bosonic_posterior_"
-# directory = f'{run_name}/'
-# pathlib.Path(directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+directory = f'{run_name}/'
+pathlib.Path(directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
 
-#posterior on mchi is influences such that we don't same mchi < 100 (10^2) see prior corner plots
+
 variable_params = {'gamma1':[0.,8.],'gamma2':[0.,8.],'gamma3':[0.5,8.],'rho_t1':[2.,8.3],'rho_t2':[2.,8.3],
                   'mchi':[0, 8],'gchi_over_mphi': [-2,3],'adm_fraction':[0., 5.],'ceft':[EOS.min_norm, EOS.max_norm]}
-# variable_params.update({'ceft':[EOS.min_norm, EOS.max_norm]})
-#variable_params = {'mchi':[-2, 9],'gchi_over_mphi': [-5,3],'adm_fraction':[0., 1.7]}
+
+
 for i in range(number_stars):
 	variable_params.update({'rhoc_' + str(i+1):[14.6, 16]})
 
 
 
-#static_params = {'gamma1': 2.3, 'gamma2': 4., 'gamma3': 2.6, 'rho_t1': 1.8, 'rho_t2': 4., 'ceft': 2.6}
+
 static_params = {}
-# In[ ]:
 
 
 prior = Prior(EOS, variable_params, static_params, chirp_mass)
@@ -105,7 +89,7 @@ print("Testing done")
 
 start = time.time()
 result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=3000, evidence_tolerance=0.1,
-              n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{run_name}', verbose=True)
+              n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{run_name}/{run_name}', verbose=True)
 end = time.time()
 print(end - start)
 
@@ -113,11 +97,9 @@ print('Testing done')
 print('Moving on to posterior analysis')
 
 
-PosteriorAnalysis.compute_auxiliary_data_ADM(run_name, EOS,
-                                         variable_params, static_params, prior = False)
+PosteriorAnalysis.compute_auxiliary_data(directory, EOS, variable_params, static_params, chirp_mass, dm=True, de=False, sampler='multinest', identifier=run_name)
 
-
-PosteriorAnalysis.compute_table_data_ADM(run_name, EOS, variable_params, static_params)
+PosteriorAnalysis.compute_table_data(directory, EOS, variable_params, static_params, dm=True, de=False, sampler='multinest', identifier=run_name)
 
 
 def get_quantiles(array, quantiles=[0.025, 0.5, 0.975]):
