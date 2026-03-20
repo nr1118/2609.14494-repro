@@ -10,7 +10,7 @@ from pymultinest.solve import solve
 import time
 import os
 import pathlib
-
+from pathlib import Path
 
 import neost.global_imports as global_imports
 
@@ -20,6 +20,8 @@ Msun = global_imports._M_s
 pi = global_imports._pi
 rho_ns = global_imports._rhons
 
+
+script_dir = Path(__file__).resolve().parent
 
 eos_name = 'polytropes'
 
@@ -36,8 +38,10 @@ chirp_mass = [None]
 number_stars = len(chirp_mass)
 
 run_name = "Bosonic_prior_"
-directory = f'{run_name}/' 
-pathlib.Path(directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+repro_path = script_dir.parent / f'{run_name}/'
+repro_path.mkdir(parents=True, exist_ok=True).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+
+print(f"Folder created at: {repro_path}")
 
 variable_params = {'gamma1':[0.,8.],'gamma2':[0.,8.],'gamma3':[0.5,8.],'rho_t1':[2.,8.3],'rho_t2':[2.,8.3],
                   'mchi':[0, 8],'gchi_over_mphi': [-2,3],'adm_fraction':[0., 5.],'ceft':[EOS.min_norm, EOS.max_norm]}
@@ -65,7 +69,7 @@ print("number of parameters is %d" %len(variable_params))
 #Then we start the sampling, note the greatly increased number of livepoints, this is required because each livepoint terminates after 1 iteration
 start = time.time()
 result = solve(LogLikelihood=likelihood.loglike_prior, Prior=prior.inverse_sample, n_live_points=30000, evidence_tolerance=0.1,
-               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{run_name}/{run_name}', verbose=True)
+               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{repro_path}/{run_name}', verbose=True)
 end = time.time()
 print(end - start)
 
@@ -73,4 +77,4 @@ print(end - start)
 
 print('Solving done, moving to Prior Analysis')
 
-PosteriorAnalysis.compute_auxiliary_data(directory, EOS, variable_params, static_params, chirp_mass, dm=True, de=False, sampler='multinest', identifier=run_name)
+PosteriorAnalysis.compute_auxiliary_data(repro_path, EOS, variable_params, static_params, chirp_mass, dm=True, de=False, sampler='multinest', identifier=run_name)

@@ -11,6 +11,7 @@ import time
 import os
 import pathlib
 
+from pathlib import Path
 
 import neost.global_imports as global_imports
 
@@ -22,7 +23,9 @@ pi = global_imports._pi
 rho_ns = global_imports._rhons
 
 
+script_dir = Path(__file__).resolve().parent
 
+eos_name = 'polytropes'
 
 EOS = polytropes.PolytropicEoS(crust = 'ceft-Keller-N3LO', rho_t = 1.5*rho_ns)
 
@@ -35,8 +38,10 @@ number_stars = len(chirp_mass)
 
 
 run_name = "Baryonic_prior_"
-directory = f'{run_name}/'
-pathlib.Path(directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+repro_path = script_dir.parent / f'{run_name}/'
+repro_path.mkdir(parents=True, exist_ok=True).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+
+print(f"Folder created at: {repro_path}")
 
 
 
@@ -59,7 +64,7 @@ print("number of parameters is %d" %len(variable_params))
 
 start = time.time()
 result = solve(LogLikelihood=likelihood.loglike_prior, Prior=prior.inverse_sample, n_live_points=100000, evidence_tolerance=0.1,
-               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{run_name}/{run_name}', verbose=True)
+               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{repro_path}/{run_name}', verbose=True)
 end = time.time()
 print(end - start)
 
@@ -68,4 +73,4 @@ print('Moving on to posterior analysis')
 
 
 
-PosteriorAnalysis.compute_auxiliary_data(directory, EOS, variable_params, static_params, chirp_mass, dm=False, de=False, sampler='multinest', identifier=run_name)
+PosteriorAnalysis.compute_auxiliary_data(repro_path, EOS, variable_params, static_params, chirp_mass, dm=False, de=False, sampler='multinest', identifier=run_name)

@@ -10,6 +10,7 @@ from pymultinest.solve import solve
 import time
 import os
 import pathlib
+from pathlib import Path
 
 
 import neost.global_imports as global_imports
@@ -20,20 +21,24 @@ Msun = global_imports._M_s
 pi = global_imports._pi
 rho_ns = global_imports._rhons
 
+script_dir = Path(__file__).resolve().parent
 
+data_path = script_dir.parent / "data"
+
+eos_name = 'polytropes'
 
 EOS = polytropes.PolytropicEoS(crust = 'ceft-Keller-N3LO', rho_t = 1.5*rho_ns, adm_type = 'Dark Energy')
 
 
 # Create the likelihoods for the individual measurements
-mr_J0740 = np.loadtxt('J0740_gamma_NxX_lp40k_se001_mrsamples_post_equal_weights.dat').T
+mr_J0740 = np.loadtxt(f'{data_path}/J0740_gamma_NxX_lp40k_se001_mrsamples_post_equal_weights.dat').T
 J0740_LL = gaussian_kde(mr_J0740)
 
-mr_J0030 = np.loadtxt('J0030_bravo_STPDT_NxX_lp1k_se08_mrsamples_post_equal_weights.dat').T
+mr_J0030 = np.loadtxt(f'{data_path}/J0030_bravo_STPDT_NxX_lp1k_se08_mrsamples_post_equal_weights.dat').T
 J0030_LL = gaussian_kde(mr_J0030)
 
 
-mr_J0437 = np.loadtxt('J0437_3C50_CST_PDT_AGN_lp20k_se03_mrsamples_post_equal_weights.dat').T
+mr_J0437 = np.loadtxt(f'{data_path}/J0437_3C50_CST_PDT_AGN_lp20k_se03_mrsamples_post_equal_weights.dat').T
 J0437_LL = gaussian_kde(mr_J0437)
 
 
@@ -45,8 +50,10 @@ chirp_mass = [None,None,None]
 number_stars = len(chirp_mass)
 
 run_name = "Dark_energy_posterior_"
-directory = f'{run_name}/'
-pathlib.Path(directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+repro_path = script_dir.parent / f'{run_name}/'
+repro_path.mkdir(parents=True, exist_ok=True).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+
+print(f"Folder created at: {repro_path}")
 
 
 
@@ -76,7 +83,7 @@ print("number of parameters is %d" %len(variable_params))
 
 ## TESTING ##
 print("Testing prior and likelihood")
-cube = np.random.rand(500, len(variable_params))
+cube = np.random.rand(50, len(variable_params))
 for i in range(len(cube)):
     par = prior.inverse_sample(cube[i])
     print(likelihood.call(par),i)
@@ -88,7 +95,7 @@ print("Testing done")
 
 start = time.time()
 result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=3000, evidence_tolerance=0.1,
-               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{run_name}/{run_name}', verbose=True)
+               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{repro_path}/{run_name}', verbose=True)
 end = time.time()
 print(end - start)
 
@@ -96,9 +103,9 @@ print('Solving done')
 
 
 
-PosteriorAnalysis.compute_auxiliary_data(directory, EOS, variable_params, static_params, chirp_mass, dm=False, de=True, sampler='multinest', identifier=run_name)
+PosteriorAnalysis.compute_auxiliary_data(repro_path, EOS, variable_params, static_params, chirp_mass, dm=False, de=True, sampler='multinest', identifier=run_name)
 
-PosteriorAnalysis.compute_table_data(directory, EOS, variable_params, static_params, dm=False, de=True, sampler='multinest', identifier=run_name)
+PosteriorAnalysis.compute_table_data(repro_path, EOS, variable_params, static_params, dm=False, de=True, sampler='multinest', identifier=run_name)
 
 def get_quantiles(array, quantiles=[0.025, 0.5, 0.975]):
         contours = np.nanquantile(array, quantiles) #changed to nanquantile to inorder to ignore the nans that may appear
@@ -109,7 +116,7 @@ def get_quantiles(array, quantiles=[0.025, 0.5, 0.975]):
         plus = high - median
         return np.round(median,2),np.round(plus,2),np.round(minus,2) 
 
-Data_array = np.loadtxt(run_name + 'table_data.txt')
+Data_array = np.loadtxt(repro_path/f'{run_name}' + 'table_data.txt')
 print('M_TOV: ', get_quantiles(Data_array[:,0]))
 print('R_TOV: ', get_quantiles(Data_array[:,1]))
 print('R_1.4: ', get_quantiles(Data_array[:,2]))

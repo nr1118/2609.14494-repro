@@ -10,6 +10,7 @@ from pymultinest.solve import solve
 import time
 import os
 import pathlib
+from pathlib import Path
 
 
 import neost.global_imports as global_imports
@@ -20,6 +21,7 @@ Msun = global_imports._M_s
 pi = global_imports._pi
 rho_ns = global_imports._rhons
 
+script_dir = Path(__file__).resolve().parent
 
 eos_name = 'polytropes'
 
@@ -34,8 +36,10 @@ chirp_mass = [None]
 number_stars = len(chirp_mass)
 
 run_name = "Dark_energy_prior_"
-directory = f'{run_name}/'
-pathlib.Path(directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+repro_path = script_dir.parent / f'{run_name}/'
+repro_path.mkdir(parents=True, exist_ok=True).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+
+print(f"Folder created at: {repro_path}")
 
 #lower_bound_rho_plus = 1.5*rho_ns --> right down to the N3LO chiral EFT band
 #upper_bound_rho_plus = 10**(16)/rho_ns = 37.31426766180507 #taken to the an energy density that captures all of the maximum central energy densities for the entire PP parameterization
@@ -67,7 +71,7 @@ print("number of parameters is %d" %len(variable_params))
 # Then we start the sampling, note the greatly increased number of livepoints, this is required because each livepoint terminates after 1 iteration
 start = time.time()
 result = solve(LogLikelihood=likelihood.loglike_prior, Prior=prior.inverse_sample, n_live_points=30000, evidence_tolerance=0.1,
-              n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{run_name}/{run_name}', verbose=True)
+              n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{repro_path}/{run_name}', verbose=True)
 end = time.time()
 print(end - start)
 
@@ -76,6 +80,6 @@ print(end - start)
 print('Solving done')
 print('Moving to Prior Analysis')
 
-PosteriorAnalysis.compute_auxiliary_data(directory, EOS, variable_params, static_params, chirp_mass, dm=False, de=True, sampler='multinest', identifier=run_name)
+PosteriorAnalysis.compute_auxiliary_data(repro_path, EOS, variable_params, static_params, chirp_mass, dm=False, de=True, sampler='multinest', identifier=run_name)
 
-PosteriorAnalysis.compute_table_data(directory, EOS, variable_params, static_params, dm=False, de=True, sampler='multinest', identifier=run_name)
+PosteriorAnalysis.compute_table_data(repro_path, EOS, variable_params, static_params, dm=False, de=True, sampler='multinest', identifier=run_name)

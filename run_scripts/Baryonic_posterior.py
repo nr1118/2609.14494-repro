@@ -10,6 +10,7 @@ from pymultinest.solve import solve
 import time
 import os
 import pathlib
+from pathlib import Path
 
 
 # In[ ]:
@@ -23,21 +24,29 @@ Msun = global_imports._M_s
 pi = global_imports._pi
 rho_ns = global_imports._rhons
 
+script_dir = Path(__file__).resolve().parent
+
+eos_name = 'polytropes'
 
 EOS = polytropes.PolytropicEoS(crust = 'ceft-Keller-N3LO', rho_t = 1.5*rho_ns)
 
 
+data_path = script_dir.parent / "data"
 
 # Create the likelihoods for the individual measurements
-mr_J0740 = np.loadtxt('J0740_gamma_NxX_lp40k_se001_mrsamples_post_equal_weights.dat').T
+mr_J0740 = np.loadtxt(f'{data_path}/J0740_gamma_NxX_lp40k_se001_mrsamples_post_equal_weights.dat').T
 J0740_LL = gaussian_kde(mr_J0740)
 
-mr_J0030 = np.loadtxt('J0030_bravo_STPDT_NxX_lp1k_se08_mrsamples_post_equal_weights.dat').T
+mr_J0030 = np.loadtxt(f'{data_path}/J0030_bravo_STPDT_NxX_lp1k_se08_mrsamples_post_equal_weights.dat').T
 J0030_LL = gaussian_kde(mr_J0030)
 
 
-mr_J0437 = np.loadtxt('J0437_3C50_CST_PDT_AGN_lp20k_se03_mrsamples_post_equal_weights.dat').T
+mr_J0437 = np.loadtxt(f'{data_path}/J0437_3C50_CST_PDT_AGN_lp20k_se03_mrsamples_post_equal_weights.dat').T
 J0437_LL = gaussian_kde(mr_J0437)
+
+
+likelihood_functions = [J0740_LL.pdf, J0030_LL.pdf,J0437_LL.pdf]
+likelihood_params = [['Mass', 'Radius'],['Mass','Radius'],['Mass','Radius']]
 
 
 likelihood_functions = [J0740_LL.pdf, J0030_LL.pdf,J0437_LL.pdf]
@@ -48,8 +57,10 @@ chirp_mass = [None,None,None]
 number_stars = len(chirp_mass)
 
 run_name = "Baryonic_posterior_"
-directory = f'{run_name}/'
-pathlib.Path(directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+repro_path = script_dir.parent / f'{run_name}/'
+repro_path.mkdir(parents=True, exist_ok=True).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+
+print(f"Folder created at: {repro_path}")
 
 
 variable_params = {'gamma1':[0.,8.],'gamma2':[0.,8.],'gamma3':[0.5,8.],'rho_t1':[2.,8.3],'rho_t2':[2.,8.3],'ceft':[EOS.min_norm, EOS.max_norm]}
@@ -84,7 +95,7 @@ print("Testing done")
 
 start = time.time()
 result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=3000, evidence_tolerance=0.1,
-               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{run_name}/{run_name}', verbose=True)
+               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=f'{repro_path}/{run_name}', verbose=True)
 end = time.time()
 print(end - start)
 
@@ -92,9 +103,9 @@ print('Testing done')
 print('Moving on to posterior analysis')
 
 
-PosteriorAnalysis.compute_auxiliary_data(directory, EOS, variable_params, static_params, chirp_mass, dm=False, de=False, sampler='multinest', identifier=run_name)
+PosteriorAnalysis.compute_auxiliary_data(repro_path, EOS, variable_params, static_params, chirp_mass, dm=False, de=False, sampler='multinest', identifier=run_name)
 
-PosteriorAnalysis.compute_table_data(directory, EOS, variable_params, static_params, dm=False, de=False, sampler='multinest', identifier=run_name)
+PosteriorAnalysis.compute_table_data(repro_path, EOS, variable_params, static_params, dm=False, de=False, sampler='multinest', identifier=run_name)
 
 
 
