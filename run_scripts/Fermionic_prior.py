@@ -36,7 +36,7 @@ chirp_mass = [None]
 number_stars = len(chirp_mass)
 
 run_name = "Fermionic_prior_"
-repro_path = script_dir.parent / f'{run_name}/'
+repro_path = script_dir.parent / 'repro' / f'{run_name}/'
 repro_path.mkdir(parents=True, exist_ok=True).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
 
 print(f"Folder created at: {repro_path}")

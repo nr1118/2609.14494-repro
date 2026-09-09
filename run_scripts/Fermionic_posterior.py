@@ -23,7 +23,7 @@ rho_ns = global_imports._rhons
 
 script_dir = Path(__file__).resolve().parent
 
-data_path = script_dir.parent / "data"
+data_path = script_dir.parent / 'data'
 
 eos_name = 'polytropes'
 
@@ -51,7 +51,7 @@ chirp_mass = [None,None,None]
 number_stars = len(chirp_mass)
 
 run_name = "Fermionic_posterior_"
-repro_path = script_dir.parent / f'{run_name}/'
+repro_path = script_dir.parent / 'repro' / f'{run_name}/'
 repro_path.mkdir(parents=True, exist_ok=True).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
 
 print(f"Folder created at: {repro_path}")

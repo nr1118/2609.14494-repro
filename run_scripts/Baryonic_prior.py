@@ -38,7 +38,7 @@ number_stars = len(chirp_mass)
 
 
 run_name = "Baryonic_prior_"
-repro_path = script_dir.parent / f'{run_name}/'
+repro_path = script_dir.parent / 'repro' / f'{run_name}/'
 repro_path.mkdir(parents=True, exist_ok=True).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
 
 print(f"Folder created at: {repro_path}")
@@ -69,7 +69,7 @@ end = time.time()
 print(end - start)
 
 print('Testing done')
-print('Moving on to posterior analysis')
+print('Moving on to prior analysis')
 
 
 

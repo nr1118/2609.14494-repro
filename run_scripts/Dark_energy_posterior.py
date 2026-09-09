@@ -23,7 +23,7 @@ rho_ns = global_imports._rhons
 
 script_dir = Path(__file__).resolve().parent
 
-data_path = script_dir.parent / "data"
+data_path = script_dir.parent / 'data'
 
 eos_name = 'polytropes'
 
@@ -50,7 +50,7 @@ chirp_mass = [None,None,None]
 number_stars = len(chirp_mass)
 
 run_name = "Dark_energy_posterior_"
-repro_path = script_dir.parent / f'{run_name}/'
+repro_path = script_dir.parent / 'repro' / f'{run_name}/'
 repro_path.mkdir(parents=True, exist_ok=True).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
 
 print(f"Folder created at: {repro_path}")
@@ -60,7 +60,7 @@ print(f"Folder created at: {repro_path}")
 #lower_bound_rho_plus = 1.5*rho_ns --> right down to the N3LO chiral EFT band
 #upper_bound_rho_plus = 10**(16)/rho_ns = 37.31426766180507 #taken to the an energy density that captures all of the maximum central energy densities for the entire PP parameterization
 variable_params = {'gamma1':[0.,8.],'gamma2':[0.,8.],'gamma3':[0.5,8.],'rho_t1':[2.,8.3],'rho_t2':[2.,8.3],
-                  'A_param':[0.1, 0.7],'rho_plus': [1.5,37.3142677],'alpha':[0.1, 1.],'ceft':[EOS.min_norm, EOS.max_norm]}
+                  'A_param':[0.1, 0.7],'rho_plus': [1.5,37.31426766],'alpha':[0.1, 1.],'ceft':[EOS.min_norm, EOS.max_norm]}
 
 
 for i in range(number_stars):

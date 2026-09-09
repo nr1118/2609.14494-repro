@@ -31,7 +31,7 @@ eos_name = 'polytropes'
 EOS = polytropes.PolytropicEoS(crust = 'ceft-Keller-N3LO', rho_t = 1.5*rho_ns)
 
 
-data_path = script_dir.parent / "data"
+data_path = script_dir.parent / 'data'
 
 # Create the likelihoods for the individual measurements
 mr_J0740 = np.loadtxt(f'{data_path}/J0740_gamma_NxX_lp40k_se001_mrsamples_post_equal_weights.dat').T
@@ -57,7 +57,7 @@ chirp_mass = [None,None,None]
 number_stars = len(chirp_mass)
 
 run_name = "Baryonic_posterior_"
-repro_path = script_dir.parent / f'{run_name}/'
+repro_path = script_dir.parent / 'repro' /f'{run_name}/'
 repro_path.mkdir(parents=True, exist_ok=True).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
 
 print(f"Folder created at: {repro_path}")
