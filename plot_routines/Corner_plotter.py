@@ -36,24 +36,29 @@ c_fermionic= plotting.c_fermionic
 c_baryonic = plotting.c_baryonic[1]
 
 
-# In[4]:
+def get_quantiles(array, quantiles=[0.025, 0.5, 0.975]): #0.025,0.5,0.975 0.16,0.5,0.84
+        contours = np.nanquantile(array, quantiles) #changed to nanquantile to inorder to ignore the nans that may appear
+        low = contours[0]
+        median = contours[1]
+        high = contours[2]
+        minus = low - median
+        plus = high - median
+        return np.round(median,2),np.round(plus,2),np.round(minus,2) 
 
+plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+plt.rc('text', usetex=True)
 
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
 
-rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
-rc('text', usetex=True)
-
-pyplot.rc('text', usetex=True)
-pyplot.rc('font', family='serif')
-
-pyplot.rcParams['xtick.direction'] = 'in'
-pyplot.rcParams['xtick.minor.visible'] = True
-pyplot.rcParams['ytick.direction'] = 'in'
-pyplot.rcParams['ytick.minor.visible'] = True
-pyplot.rcParams['xtick.major.size'] = 5
-pyplot.rcParams['ytick.major.size'] = 5
-pyplot.rcParams['ytick.right'] = True
-pyplot.rcParams['xtick.top'] = True
+plt.rcParams['xtick.direction'] = 'in'
+plt.rcParams['xtick.minor.visible'] = True
+plt.rcParams['ytick.direction'] = 'in'
+plt.rcParams['ytick.minor.visible'] = True
+plt.rcParams['xtick.major.size'] = 5
+plt.rcParams['ytick.major.size'] = 5
+plt.rcParams['ytick.right'] = True
+plt.rcParams['xtick.top'] = True
 
 
 parser = argparse.ArgumentParser()
@@ -64,21 +69,21 @@ args = parser.parse_args()
 script_dir = Path(__file__).resolve().parent
 
 
-plots_path = script_dir.parent / 'plots' if not args.repro else script_dir.parent / 'repro_plots/'
+plots_path = script_dir.parent / 'plots' if not args.repro else script_dir.parent / 'repro'/ 'plots'
 plots_path.mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
 
-posterior_data_path = script_dir.parent / 'results/posterior/DE/Dark_energy_posterior_' if not args.repro else script_dir.parent / 'repro/Dark_energy_posterior_/Dark_energy_posterior_'
+posterior_data_path = script_dir.parent / 'results'/'posterior'/'DE'/'Dark_energy_posterior_' if not args.repro else script_dir.parent / 'repro'/'Dark_energy_posterior_'/'Dark_energy_posterior_'
 
-prior_data_path = script_dir.parent / 'results/prior/DE/Dark_energy_prior_' if not args.repro else script_dir.parent / 'repro/Dark_energy_prior_/Dark_energy_prior_'
+prior_data_path = script_dir.parent / 'results'/'prior'/'DE'/'Dark_energy_prior_' if not args.repro else script_dir.parent / 'repro'/'Dark_energy_prior_'/'Dark_energy_prior_'
 
-tmp = np.loadtxt(prior_data_path + 'prior_post_equal_weights.dat')
+tmp = np.loadtxt(prior_data_path + 'post_equal_weights.dat')
 print('Generating the prior corner plot')
 
 
 Matrix_prior = np.zeros((len(tmp),3))
 
 #A_param = tmp[:,5]
-#rho_plus = tmp[:,6]
+#rho_plus = tmp[:,6] (units are factors of rho_ns)
 #alpha = tmp[:,7]
 
 for i in range(len(tmp)):
@@ -110,7 +115,9 @@ print('Generating the posterior corner plot')
 ewposterior = np.loadtxt(posterior_data_path + 'post_equal_weights.dat')
 
 
-
+#A_param = tmp[:,5]
+#rho_plus = tmp[:,6] (units are factors of rho_ns)
+#alpha = tmp[:,7]
 
 # In[5]:
 A = ewposterior[:,5]
@@ -123,7 +130,7 @@ for i in range(len(ewposterior)):
     Matrix[i] =A[i],np.log10(rho_plus[i]*rho_ns),alpha[i]
 
 
-Matrix = np.vstack((Matrix,Matrix,Matrix)) #just stacking the posterior samples three times to make the contours a little smooth and to help 1-D histograms be of the same count levels as the priors so that their features are more visible. This is just for visualization purposes and does not affect the actual posterior distribution in any way.      
+Matrix = np.vstack((Matrix,Matrix,Matrix)) #just stacking the posterior samples three times to make the 1-D histograms be of the same count levels as the priors so that their features are more visible relative to the prior counts. This is just for visualization purposes and does not affect the actual posterior distribution in any way.      
     
 ell = corner.corner(Matrix_prior,smooth = 1.0,color = '#377eb8',group = 'prior',range = [(0.1,0.7),(14.4,16),(0.1,1)],
                    plot_datapoints = False,plot_density = True,plot_contours = True,divergences = False,
@@ -152,13 +159,22 @@ figure.savefig(plots_path / 'Posterior_prior_corner_dark_energy.pdf', bbox_inche
 
 # In[ ]:
 
-bosonic_posterior_data_path = script_dir.parent / 'results/posterior/BDM/Bosonic_posterior_' if not args.repro else script_dir.parent / 'repro/Bosonic_posterior_/Bosonic_posterior_'
+bosonic_posterior_data_path = script_dir.parent / 'results'/'posterior'/'BDM'/'Bosonic_posterior_' if not args.repro else script_dir.parent / 'repro'/'Bosonic_posterior_'/'Bosonic_posterior_'
 
 #ADM portion
 ewposterior_bosonic = np.loadtxt(bosonic_posterior_data_path + 'post_equal_weights.dat')
 print('Generating the prior corner plot')
 
 print(len(ewposterior_bosonic))
+
+# mchi = ewposterior[:,5]
+# gchi_over_mphi = ewposterior[:,6]
+# Fchi = ewposterior[:,7]
+#This is directly related the ordering of variable_params = {'gamma1':[0.,8.],'gamma2':[0.,8.],'gamma3':[0.5,8.],'rho_t1':[2.,8.3],'rho_t2':[2.,8.3],
+                #   'mchi':[0, 8],'gchi_over_mphi': [-2,3],'adm_fraction':[0., 5.],'ceft':[EOS.min_norm, EOS.max_norm]}
+
+
+
 Matrix_bosonic = np.zeros((len(ewposterior_bosonic),3))
 
 for i in range(len(ewposterior_bosonic)):
@@ -179,15 +195,15 @@ for ax in figure.get_axes():
 
 
 # In[4]:
-fermionic_posterior_data_path = script_dir.parent / 'results/posterior/BDM/Fermionic_posterior_' if not args.repro else script_dir.parent / 'repro/Fermionic_posterior_/Fermionic_posterior_'
+fermionic_posterior_data_path = script_dir.parent / 'results'/'posterior'/'FDM'/'Fermionic_posterior_' if not args.repro else script_dir.parent / 'repro'/'Fermionic_posterior_'/'Fermionic_posterior_'
 
 ewposterior_fermionic = np.loadtxt(fermionic_posterior_data_path + 'post_equal_weights.dat')
 
 
-# In[5]:
-
-
-
+# mchi = ewposterior[:,5]
+# gchi_over_mphi = ewposterior[:,6]
+# Fchi = ewposterior[:,7]
+#This is directly related the ordering of variable_params = {'gamma1':[0.,8.],'gamma2':[0.,8.],'gamma3':[0.5,8.],'rho_t1':[2.,8.3],'rho_t2':[2.,8.3], 'mchi':[0, 9],'gchi_over_mphi': [-5,3],'adm_fraction':[0., 5.],'ceft':[EOS.min_norm, EOS.max_norm]} in the respective run scripts in the run_scripts directory
 
 mchi = ewposterior_fermionic[:,5]
 gchi_over_mphi = ewposterior_fermionic[:,6]
@@ -207,7 +223,7 @@ ell = corner.corner(Matrix_bosonic,smooth = 1.0,color = c_bosonic,range = [(2,8)
 
 
 figure = corner.corner(Matrix_fermionic,smooth = 1.0,fig = ell,color = c_fermionic,labels = [r"log$_{10}$(m$_\chi$/MeV)",r"log$_{10}$($\frac{\mathdefault{g}_\chi}{\mathdefault{m}_\phi/\mathrm{MeV}})$",r"F$_\chi \, [\%]$"],
-                      range = [(2,8),(-2,3),(0,5.)], show_titles = True,label_kwargs = {"fontsize":18,"font":'serif'},title_kwargs = {"fontsize":15},
+                      range = [(2,8),(-5,3),(0,5.)], show_titles = True,label_kwargs = {"fontsize":18,"font":'serif'},title_kwargs = {"fontsize":15},
                       hist_kwargs = {'linestyle': 'dotted','linewidth': 2.0}, contour_kwargs = {'linestyles':'dotted','linewidths': 2.0})
 figure.subplots_adjust(right=1.15,top=1.15)
 
