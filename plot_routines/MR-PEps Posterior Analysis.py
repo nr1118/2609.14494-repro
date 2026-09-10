@@ -1,5 +1,3 @@
-import neost
-from neost.eos import polytropes
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -16,8 +14,7 @@ import argparse
 
 # In[2]:
 
-
-import neost.global_imports as global_imports
+import global_imports
 
 c = global_imports._c
 G = global_imports._G
@@ -146,10 +143,10 @@ def mass_radius_posterior_plot(root_name_DE,root_name_BDM,root_name_B, root_name
 
 
 
-root_name_DE = script_dir /'results'/ 'posteriors' / 'DE' / 'Dark_energy_posterior_'
-root_name_BDM = script_dir /'results'/ 'posteriors' / 'BDM' / 'Bosonic_posterior_'
-root_name_B = script_dir / 'results' / 'posteriors' / 'B' / 'Baryonic_posterior_'
-root_name_FDM = script_dir / 'results' / 'posteriors' / 'FDM' / 'Fermionic_posterior_'
+root_name_DE = script_dir /'results'/ 'posterior' / 'DE' / 'Dark_energy_posterior_'
+root_name_BDM = script_dir /'results'/ 'posterior' / 'BDM' / 'Bosonic_posterior_'
+root_name_B = script_dir / 'results' / 'posterior' / 'B' / 'Baryonic_posterior_'
+root_name_FDM = script_dir / 'results' / 'posterior' / 'FDM' / 'Fermionic_posterior_'
 
 
 
@@ -173,8 +170,8 @@ ax = [
 ]
 
 #Loading PP Baryonic EOS Arrays
-B_minpres = np.log10(np.load(root_name_B + 'minpres_baryon.npy'))
-B_maxpres = np.log10(np.load(root_name_B + 'maxpres_baryon.npy'))
+B_minpres = np.log10(np.load(root_name_B + 'minpres.npy'))
+B_maxpres = np.log10(np.load(root_name_B + 'maxpres.npy'))
 #Load the total combined EoS Arrays
 DE_min_tot = np.log10(np.load(root_name_DE + 'minpres_total.npy'))
 DE_max_tot = np.log10(np.load(root_name_DE + 'maxpres_total.npy'))
