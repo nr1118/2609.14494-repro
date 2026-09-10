@@ -52,27 +52,40 @@ The most important option is the -r (--repro) flag, which all scripts recognize.
 
  RUN SCRIPTS
 ===========
-The run scripts for all prior and posterior inference calculations can be found in the run_scripts/ directory and can be used to reproduce all of the results in the paper. You need to adapt these scripts if you want to use them with custom run names and/or output directories. These scripts automatically place the results in the `repro/` directory. Furthermore, if you wish to use the plotting scripts with these runs, they must be in the `repro/` directory. The overall structure of the run_scripts folder is as follows:
+The run scripts for all prior and posterior inference calculations can be found in the run_scripts/ directory and can be used to reproduce all of the results in the paper. You need to adapt these scripts if you want to use them with custom run names and/or output directories. These scripts automatically place the results in the `repro/` directory. Furthermore, if you wish to use the plotting scripts with these runs, they must be in the `repro/` directory. The overall structure of the `run_scripts` folder is as follows:
 
-- run_scripts/posterior: All posterior script files
+- `run_scripts/posterior`: All posterior script files
 
     - `Baryonic_posterior.py` and `Baryonic_prior.py`: The posterior and prior run scripts, which use the [J0740](https://arxiv.org/abs/2406.14466), [J0437](https://arxiv.org/abs/2407.06789), and [J0030](https://arxiv.org/abs/2308.09469) mass-radius posterior inferences. Here, both scripts compute the posterior and prior distributions of the piecewise polytropic (PP) high-density extension EoS model in which all EoS parameters. 
     -  `Bosonic_posterior.py` and `Bosonic_prior.py`: The posterior and prior scripts which consider bosonic ADM admixed neutron stars, described by the [Nelson et al. 2019 bosonic ADM model](https://arxiv.org/abs/1803.03266), using the [J0740](https://arxiv.org/abs/2406.14466), [J0437](https://arxiv.org/abs/2407.06789), and [J0030](https://arxiv.org/abs/2308.09469) mass-radius posterior inferences. These scripts sample both the bosonic ADM and PP EoS parameters, and compare the resulting masses and radii to the above mentioned sources.
-
     - `Fermionic_posterior.py` and `Fermionic_prior.py`: The posterior and prior scripts which consider fermionic ADM admixed neutron stars, described by the [Nelson et al. 2019 fermionic ADM model](https://arxiv.org/abs/1803.03266), using the [J0740](https://arxiv.org/abs/2406.14466), [J0437](https://arxiv.org/abs/2407.06789), and [J0030](https://arxiv.org/abs/2308.09469) mass-radius posterior inferences. These scripts sample both the fermionic ADM and PP EoS parameters, and compare the resulting masses and radii to the above mentioned sources.
-
-
     - `Dark_energy_posterior.py` and `Dark_energy_prior.py`: The posterior and prior scripts which consider neutron stars with an MCDF core, described by the Modified Chaplygin Dark Fluid model used in [Pretel et. al. 2024](https://arxiv.org/abs/2411.08793), using the   [J0740](https://arxiv.org/abs/2406.14466), [J0437](https://arxiv.org/abs/2407.06789), and [J0030](https://arxiv.org/abs/2308.09469) mass-radius posterior inferences. These scripts sample both the MCDF and PP EoS parameters, and compare the resulting masses and radii to the above mentioned sources.
  
 
 OUTPUT FILE STRUCTURES
 ======================
-- results/: The first level is either "prior" or "posterior". For the prior, this is followed by the output files of the runs which vary both the baryonic matter and ADM EoS, namely the output files ending with post_equal_weights.dat, MR_prpr.txt, and pressures.npy.
-      - post_equal_weights.dat: Standard Multinest output file, which containts the admixed (baryonic + ADM) EoS model parameters of the PP model and fermionic ADM EoS, the sampled central density, and log-likelihood evaluation of each sample.
-      - MR_prpr.txt: Standard NEoST output file, which contains the corresponding mass and radius samples of each sampled admixed EoS and central density.
-      - pressures.npy: Standard NEoST output file, which contains the pressures of the baryonic EoS in which ADM was considered during prior sampling.
+- `results/`: The first level is either `prior/` or `posterior/`. For both the `prior/` and `posterior/`, there is list of 4 directories: `B/` which constains the baryonic only posterior/prior inferences, `BDM/` which contatins the bosonic ADM admixed posterior/prior inferences, `FDM/` which contains the femrionic ADM admixed posterior/prior inference, and `DE/` which contains the MCDF core and baryonic shell posterior/prior inferences. This is followed by the output files of the runs which vary both the baryonic matter and ADM EoS, namely the output files ending with `post_equal_weights.dat`, `MR_prpr.txt`, `pressures.npy`, `minpres.npy`/`maxpres.npy`, and `minpres_baryon.npy`/`maxpres_baryon.npy`. 
+      - `post_equal_weights.dat`: Standard Multinest output file, which containts the EoS model parameters of the corresponding neutron star model being consider, the sampled central density of each source, and log-likelihood evaluation of each sample. Note, the column ordering of the EoS model parameters and the central densities for each source is determined by the ordering of the `variable_params` list in the `run_scripts/` directory.
+      - `MR_prpr.txt`: Standard NEoST output file, which contains the corresponding mass and radius samples of each sampled EoS and central density.
+      - `pressures.npy`: Standard NEoST output file, which contains the pressures of the considered EoS model.
+      - `minpres.npy`/`maxpres.npy`: These are simply the upper (maxpres) and lower (minpres) pressure bounds on the 68% and 95% confidence regions, which are derived from the `pressures.npy` files. The columns go as central energy densities, min/max 68%, and min/max 95%.
+      -`minpres_baryon.npy`/`maxpres_baryon.npy`: The same as `minpres.npy`/`maxpres.npy`, but when the dark sector (ADM or MCDF) are neglected in the posterior/prior analysis pipeline, namely in the functions calls within `PosteriorAnalysis.py`. The column structure is the same as that of the `minpres.npy`/`maxpres.npy`. Note, the `minpres_baryon.npy`/`maxpres_baryon.npy` are only relevant for the bosonic ADM, fermionic ADM, and MCDF runs. 
 
-  For the posterior, the directory is followed by two more directories, Future-X/ and NICER_Real_Data/, which are the posteriors corresponding to the Future-X and Real data inferences in the manuscript, respectively.
-    - Future-X/: Followed by two more directories for the ADM_core_model/ and No_ADM_Model/, which of course correspond to the ADM core model and No ADM model, respectively. Both of these directories then have the output directories for the posteriors in which ADM is included (FUTUREX_ADM_VARYING_BARYONIC for the ADM core model and FUTUREX_NO_ADM_VARYING_BARYONIC for the No ADM model) and neglected from sampling (FUTUREX_ADM_BARYONIC_ONLY for the ADM core model and FUTUREX_NO_ADM_BARYONIC_ONLY for the No ADM model). These output directories have the post_equal_weights.dat, MR_prpr.txt, and pressures.npy files. Furthermore, they also have the minpres.npy and maxpres.npy file, which are simply the upper (maxpres) and lower (minpres) pressure bounds on the 68% and 95% confidence regions, which are derived from the pressures.npy files.
+  For the `posterior/` directory, each sub-directory (i.e., `B/`, `BDM/`, `FDM/`, and `DE/`) contains an additional file called `table_data.txt`. The columns of this `table_data.txt file` are the following (with the first column appearing at the top and the last column appearing on the bottom):
 
-    - NICER_Real_Data/: Followed by the output directories NICER_REAL_ADM_VARYING_BARYONIC and NICER_REAL_BARYONIC, which are the directories which include ADM and neglect it during sampling, respectively. The output files contain the same output files as that of the Future-X/ posteriors. 
+- M_TOV
+- R_TOV
+- log_10(max central energy density)
+- max central density as a ratio with respect to n_saturation
+- log_10(max central pressure)
+- R_1.4
+- log_10(central energy density of a 1.4 Msun star), 
+- max central density of a 1.4 Msun star as a ratio with respect to n_saturation
+- log_10(central pressure of a 1.4 Msun star)
+- R_2.0 
+- log_10(central energy density of a 2.0 Msun star)
+- max central density of a 2.0 Msun star as a ratio with respect to n_saturation
+- log_10(central pressure of a 2.0 Msun star)
+
+
+For the ADM admixed cases, the pressures and energy densities are the ADM pressure/energy density + the PP pressure/energy density. For the cases considering the MCDF cores, the `table_data.txt` only contains M_TOV, R_TOV, R_1.4, and R_2.0 because the manuscript only uses these values.  

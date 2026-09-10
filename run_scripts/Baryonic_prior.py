@@ -45,7 +45,7 @@ print(f"Folder created at: {repro_path}")
 
 
 
-variable_params = {'gamma1':[0.,8.],'gamma2':[0.,8.],'gamma3':[0.5,8.],'rho_t1':[2.,8.3],'rho_t2':[2.,8.3],'ceft':[EOS.min_norm, EOS.max_norm]}
+variable_params = {'ceft':[EOS.min_norm, EOS.max_norm],'gamma1':[0.,8.],'gamma2':[0.,8.],'gamma3':[0.5,8.],'rho_t1':[2.,8.3],'rho_t2':[2.,8.3]}
 
 for i in range(number_stars):
 	variable_params.update({'rhoc_' + str(i+1):[14.6, 16]})
