@@ -1,0 +1,11 @@
+NEoST.egg-info/
+build/
+dist/
+examples/chains
+*.c
+.DS_Store
+.DS_Store?
+__pycache__/
+.ipynb_checkpoints
+neost/tovsolvers/*.so
+Run Scripts/
