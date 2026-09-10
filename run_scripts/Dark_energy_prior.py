@@ -59,7 +59,7 @@ static_params = {}
 # In[ ]:
 
 
-prior = Prior(EOS, variable_params, static_params, chirp_mass)
+prior = Prior(EOS, variable_params, static_params, chirp_mass, dark_energy=True)
 likelihood = Likelihood(prior, likelihood_functions, likelihood_params, chirp_mass)
 
 print("Bounds of prior are")
