@@ -43,24 +43,26 @@ Everything in the base repository of NEoST, i.e., the chiral EFT models, the hig
 
 REPRODUCING PLOTS
 =================
-All figures in the paper can be reproduced by going to the plot_routines/ directory and running each python script within the directory. Note, if reproducing the plots via the plot_routines/ directory, the neost conda enviroment must be activated. Refer to this script and the called plot scripts in plot_routines/ for a complete account of all options available. The output of the plot_routines/ directory goes directory to the plots/ directory. Moreover, some of the scripts in the plots_routines/ directory pull from the data/ directory, which contains the posterior samples of J0740, J0437, and J0030, which are used in the posterior run_scripts.
+All figures in the paper can be reproduced by going to the plot_routines/ directory and running each python script within the directory. Note, if reproducing the plots via the plot_routines/ directory, the neost conda enviroment must be activated. Refer to this script and the called plot scripts in plot_routines/ for a complete account of all options available. The output of the plot_routines/ directory goes directory to the plots/ directory. Moreover, some of the scripts in the plots_routines/ directory pull from the data/ directory, which contains the posterior samples of [J0740](https://arxiv.org/abs/2406.14466), [J0437](https://arxiv.org/abs/2407.06789), and [J0030](https://arxiv.org/abs/2308.09469), which are used in the posterior run_scripts.
 
 The most important option is the -r (--repro) flag, which all scripts recognize. By default, generate_figs.sh uses data supplied in the results/ directory---which contains the results published in the paper---to produce figures. The -r flag tells the plot scripts to instead use user-generated data in the repro/ directory. 
 
 
 
-STOPPED HERE AT 4:01 PM, NEED TO FINISH TONIGHT!!
+
  RUN SCRIPTS
-========
+===========
 The run scripts for all prior and posterior inference calculations can be found in the run_scripts/ directory and can be used to reproduce all of the results in the paper. You need to adapt these scripts if you want to use them with custom run names and/or output directories. These scripts automatically place the results in the `repro/` directory. Furthermore, if you wish to use the plotting scripts with these runs, they must be in the `repro/` directory. The overall structure of the run_scripts folder is as follows:
 
 - run_scripts/posterior: All posterior script files
-      - /NICER_Real_Data: The real data posterior scripts which use the Riley et al. 2019 & 2021 MR inferences. Here, the NICER_REAL_ADM_VARYING.py script is the script which varies both the Baryonic and ADM equation of state parameters, whereas the NICER_REAL_BARYONIC.py script is the one which neglects the ADM EoS and only considers the Baryonic matter EoS model.
-      -  /Future-X: The Future-X data posterior scripts which consider the synthetically generated MR values corresponding to the ADM core model and No ADM models. This directory is further split into the ADM Core Model/ and No ADM Model/ directories. Within the ADM Core Model/ the FUTUREX_ADM_VARYING_BARYONIC.py is the script which samples both the ADM and baryonic matter EoS parameters using the ADM core model sources, while the FUTUREX_ADM_BARYONIC_ONLY.py script is the one which neglected the ADM EoS parameters and only samples the baryonic matter EoS parameters using the ADM core model sources. For the No ADM Model/ directory it is the same as the ADM Core Model/ directory, except now for the No ADM Model sources. Thus the scripts for the including ADM and neglecting ADM scenarios are FUTUREX_NO_ADM_VARYING_BARYONIC.py and FUTUREX_NO_ADM_BARYONIC_ONLY.py, respectively
 
--  run_scripts/prior: All prior script files
-      -  Contains the prior scripts which varies the baryonic matter and ADM EoS parameters named FERMIONIC_PRIOR.py.
-      -  /Appendix B: Contains the run scripts to generate the data used in Appendix B, which is the approximation of zero self-repulsion using 10^{-5} MeV^{-1}.
+    - `Baryonic_posterior.py` and `Baryonic_prior.py`: The posterior and prior run scripts, which use the [J0740](https://arxiv.org/abs/2406.14466), [J0437](https://arxiv.org/abs/2407.06789), and [J0030](https://arxiv.org/abs/2308.09469) mass-radius posterior inferences. Here, both scripts compute the posterior and prior distributions of the piecewise polytropic (PP) high-density extension EoS model in which all EoS parameters. 
+    -  `Bosonic_posterior.py` and `Bosonic_prior.py`: The posterior and prior scripts which consider bosonic ADM admixed neutron stars, described by the [Nelson et al. 2019 bosonic ADM model](https://arxiv.org/abs/1803.03266), using the [J0740](https://arxiv.org/abs/2406.14466), [J0437](https://arxiv.org/abs/2407.06789), and [J0030](https://arxiv.org/abs/2308.09469) mass-radius posterior inferences. These scripts sample both the bosonic ADM and PP EoS parameters, and compare the resulting masses and radii to the above mentioned sources.
+
+    - `Fermionic_posterior.py` and `Fermionic_prior.py`: The posterior and prior scripts which consider fermionic ADM admixed neutron stars, described by the [Nelson et al. 2019 fermionic ADM model](https://arxiv.org/abs/1803.03266), using the [J0740](https://arxiv.org/abs/2406.14466), [J0437](https://arxiv.org/abs/2407.06789), and [J0030](https://arxiv.org/abs/2308.09469) mass-radius posterior inferences. These scripts sample both the fermionic ADM and PP EoS parameters, and compare the resulting masses and radii to the above mentioned sources.
+
+
+    - `Dark_energy_posterior.py` and `Dark_energy_prior.py`: The posterior and prior scripts which consider neutron stars with an MCDF core, described by the Modified Chaplygin Dark Fluid model used in [Pretel et. al. 2024](https://arxiv.org/abs/2411.08793), using the   [J0740](https://arxiv.org/abs/2406.14466), [J0437](https://arxiv.org/abs/2407.06789), and [J0030](https://arxiv.org/abs/2308.09469) mass-radius posterior inferences. These scripts sample both the MCDF and PP EoS parameters, and compare the resulting masses and radii to the above mentioned sources.
  
 
 OUTPUT FILE STRUCTURES
@@ -69,9 +71,6 @@ OUTPUT FILE STRUCTURES
       - post_equal_weights.dat: Standard Multinest output file, which containts the admixed (baryonic + ADM) EoS model parameters of the PP model and fermionic ADM EoS, the sampled central density, and log-likelihood evaluation of each sample.
       - MR_prpr.txt: Standard NEoST output file, which contains the corresponding mass and radius samples of each sampled admixed EoS and central density.
       - pressures.npy: Standard NEoST output file, which contains the pressures of the baryonic EoS in which ADM was considered during prior sampling.
-  Moreover, the prior directory is also followed by two other directories:
-      - Appendix_B/: Relative radial percent differences comparing zero ADM self-repulsion to 10^{-5} MeV^{-1}. The tail end of the file indicates which choice of baryonic EoS is used and if a different step of ADM particle mass or mass-fraction were used. For example, the file Relcent_diff_intermediate_stiff_baryonic_newfchistep.npy are the results which used the intermediately stiff baryonic EoS in the manuscript with a smaller step in fchi compared to the Relcent_diff_intermediate_stiff_baryonic.npy file.
-       - Fchi_prior_calculation/: Directory containing the scripts that print the estimated ADM mass-fraction and distances to the Galactic center for J0437 and J0030. Note, these are run scripts because the results are simply printed results and not stored in a file structure.
 
   For the posterior, the directory is followed by two more directories, Future-X/ and NICER_Real_Data/, which are the posteriors corresponding to the Future-X and Real data inferences in the manuscript, respectively.
     - Future-X/: Followed by two more directories for the ADM_core_model/ and No_ADM_Model/, which of course correspond to the ADM core model and No ADM model, respectively. Both of these directories then have the output directories for the posteriors in which ADM is included (FUTUREX_ADM_VARYING_BARYONIC for the ADM core model and FUTUREX_NO_ADM_VARYING_BARYONIC for the No ADM model) and neglected from sampling (FUTUREX_ADM_BARYONIC_ONLY for the ADM core model and FUTUREX_NO_ADM_BARYONIC_ONLY for the No ADM model). These output directories have the post_equal_weights.dat, MR_prpr.txt, and pressures.npy files. Furthermore, they also have the minpres.npy and maxpres.npy file, which are simply the upper (maxpres) and lower (minpres) pressure bounds on the 68% and 95% confidence regions, which are derived from the pressures.npy files.
