@@ -61,35 +61,34 @@ def stacking(y, x):
 plot = plotting.plot_KDE
 
 
-# In[4]:
+root_name_DE = script_dir /'results'/ 'posterior' / 'DE' / 'Dark_energy_posterior_'
+root_name_BDM = script_dir /'results'/ 'posterior' / 'BDM' / 'Bosonic_posterior_'
+root_name_B = script_dir / 'results' / 'posterior' / 'B' / 'Baryonic_posterior_'
+root_name_FDM = script_dir / 'results' / 'posterior' / 'FDM' / 'Fermionic_posterior_'
 
 
 #Dark energy 
-run_name = 'DE/Dark_energy_posterior_'
-Dark_energy_table_data = np.loadtxt(run_name + 'table_data.txt') # M_TOV, R_TOV, R_2, R_1.4
+Dark_energy_table_data = np.loadtxt(root_name_DE + 'table_data.txt') # M_TOV, R_TOV, R_2, R_1.4
 Dark_energy_mtov = Dark_energy_table_data[:,0]
 Dark_energy_r14 =Dark_energy_table_data[:,2]
 Dark_energy_r2 = Dark_energy_table_data[:,3]
 Dark_energy_deltar = Dark_energy_r2 - Dark_energy_r14
 #Bosonic 
-run_name = 'BDM/Bosonic_posterior_'
-Bosonic_table_data = np.loadtxt(run_name + 'table_data.txt')
+Bosonic_table_data = np.loadtxt(root_name_BDM + 'table_data.txt')
 Bosonic_mtov = Bosonic_table_data[:,0]
 Bosonic_r14 =Bosonic_table_data[:,2]
 Bosonic_r2 = Bosonic_table_data[:,3]
 Bosonic_deltar = Bosonic_r2 - Bosonic_r14
 
 #Fermionic
-run_name = 'FDM/Fermionic_posterior_'
-Fermionic_table_data = np.loadtxt(run_name + 'table_data.txt')
+Fermionic_table_data = np.loadtxt(root_name_FDM + 'table_data.txt')
 Fermionic_mtov = Fermionic_table_data[:,0]
 Fermionic_r14 =Fermionic_table_data[:,2]
 Fermionic_r2 = Fermionic_table_data[:,3]
 Fermionic_deltar = Fermionic_r2 - Fermionic_r14
 
 #Baryonic
-run_name = 'B/Baryonic_posterior_'
-Baryonic_table_data = np.loadtxt(run_name + 'table_data.txt') #full table data: M_TOV, R_TOV, eps_cent_TOV, rho_cent_TOV, P_cent_TOV, R_1.4,
+Baryonic_table_data = np.loadtxt(root_name_B + 'table_data.txt') #full table data: M_TOV, R_TOV, eps_cent_TOV, rho_cent_TOV, P_cent_TOV, R_1.4,
                                                      #eps_cent_1.4, rho_cent_1.4, P_cent_1.4, R_2.0, eps_cent_2.0, rho_cent_2.0, P_cent_2.0.
 #Baryonic_table_data = Baryonic_table_data[:,[0,1,5,9]]
 
@@ -232,21 +231,6 @@ plot(ax, data, c_baryonic, True, bw_adjust=bw_adjust)
 
 ax.plot(diagonal, diagonal, color='xkcd:gray', lw=0.5)
 
-# Add text
-# txt = "Chiral EFT $\leq 1.1 n_0$"
-# ax = axes[0,0]
-# ax.text(0.03, 0.90, txt, transform=ax.transAxes)
-# txt = "Chiral EFT $\leq 1.5 n_0$"
-# ax = axes[1,0]
-# ax.text(0.03, 0.90, txt, transform=ax.transAxes)
-
-
-
-
-# axes[1,0].set_zorder(1)
-# axes[1,1].set_zorder(2)
-# axes[0,0].set_zorder(3)
-# axes[0,1].set_zorder(4)
 
 # Add legends
 line1 = plotting.custom_line(c_dark_energy, '-.',lw=4)
@@ -258,7 +242,7 @@ labels = ['MCDF + PP EoS', 'Bosonic ADM + PP EoS', 'Fermionic ADM + PP EoS', 'PP
 loc = (0.01,0.68)
 axes.legend(custom_lines, labels, loc=loc, fontsize = 16, frameon=True)
 
-fig.savefig('plots/R2_vs_R14.pdf', bbox_inches='tight')
+fig.savefig(plots_path + 'R2_vs_R14.pdf', bbox_inches='tight')
 
 
 
