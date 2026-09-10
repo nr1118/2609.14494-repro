@@ -1,13 +1,13 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
-get_ipython().run_line_magic('pylab', 'inline')
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.lines import Line2D
+import os
+import pathlib
+from pathlib import Path
 
+import argparse
 
 # Local
 import plotting
@@ -25,23 +25,31 @@ c_fermionic= plotting.c_fermionic
 c_baryonic = plotting.c_baryonic
 
 
-# In[2]:
+parser = argparse.ArgumentParser()
+parser.add_argument('-r', '--repro', action='store_true')
+args = parser.parse_args()
+
+# In[7]:
+script_dir = Path(__file__).resolve().parent
+
+plots_path = script_dir.parent / 'plots' if not args.repro else script_dir.parent / 'repro'/ 'plots'
+plots_path.mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
 
 
-rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
-rc('text', usetex=True)
+plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+plt.rc('text', usetex=True)
 
-pyplot.rc('text', usetex=True)
-pyplot.rc('font', family='serif')
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
 
-pyplot.rcParams['xtick.direction'] = 'in'
-pyplot.rcParams['xtick.minor.visible'] = True
-pyplot.rcParams['ytick.direction'] = 'in'
-pyplot.rcParams['ytick.minor.visible'] = True
-pyplot.rcParams['xtick.major.size'] = 5
-pyplot.rcParams['ytick.major.size'] = 5
-pyplot.rcParams['ytick.right'] = True
-pyplot.rcParams['xtick.top'] = True
+plt.rcParams['xtick.direction'] = 'in'
+plt.rcParams['xtick.minor.visible'] = True
+plt.rcParams['ytick.direction'] = 'in'
+plt.rcParams['ytick.minor.visible'] = True
+plt.rcParams['xtick.major.size'] = 5
+plt.rcParams['ytick.major.size'] = 5
+plt.rcParams['ytick.right'] = True
+plt.rcParams['xtick.top'] = True
 
 
 # In[3]:
@@ -251,85 +259,6 @@ loc = (0.01,0.68)
 axes.legend(custom_lines, labels, loc=loc, fontsize = 16, frameon=True)
 
 fig.savefig('plots/R2_vs_R14.pdf', bbox_inches='tight')
-
-
-# In[11]:
-
-
-width = 10
-height = 6
-
-fig, axes = plt.subplots(nrows=1, ncols=1, sharex=True, sharey=True, figsize=(width,height))
-# fig.subplots_adjust(wspace=0, hspace=0)
-
-# Set axis limits and ticks
-# Set axis limits and ticks
-delta_R_min = -1.0
-delta_R_max = 1.5
-maxmass_min = 1.95
-maxmass_max = 3.
-
-xticks = [ -1, 0, 1,1.5]
-xticklabels = ['$-1$', '$0$', '$1$','$1.5$']
-yticks = [2.0, 2.2, 2.4, 2.6, 2.8,3.]
-
-xlabel = r'$\Delta R$ [km]'
-ylabel = r'M$_\mathrm{TOV}$ $[M_{\odot}]$'
-axes.set_xlabel(xlabel,fontsize = 16)
-
-# axes[1,1].set_xlabel(xlabel)
-axes.set_ylabel(ylabel,fontsize = 16)
-# axes[1,0].set_ylabel(ylabel)
-# axes[0,0].set_title('PP')
-# axes[0,1].set_title('CS')
-
-axes.minorticks_on()
-
-
-axes.set_xlim(delta_R_min,delta_R_max) 
-axes.set_ylim(maxmass_min,maxmass_max) 
-axes.set_xticks(xticks) 
-axes.set_xticklabels(xticks, fontsize = 16)
-
-axes.set_yticks(yticks) 
-axes.set_yticklabels(yticks,fontsize = 16)
-
-plotting.top_side_ticks(axes)
-plotting.right_side_ticks(axes)
-
-
-
-bw_adjust = 2.0 # bw_adjust taken to 2 because contours seemed jagged 
-
-
-
-ax = axes
-data = stacking(Dark_energy_mtov, Dark_energy_deltar)
-plot(ax, data, c_dark_energy, False, [0.05, 1], '-.', bw_adjust=bw_adjust)
-
-data = stacking(Bosonic_mtov, Bosonic_deltar)
-plot(ax, data, c_bosonic, False,  [0.05, 1], '--', bw_adjust=bw_adjust)
-
-data = stacking(Fermionic_mtov, Fermionic_deltar)
-plot(ax, data, c_fermionic, False, [0.05, 1], 'dotted', bw_adjust=bw_adjust)
-
-data = stacking(Baryonic_mtov, Baryonic_deltar)
-plot(ax, data, c_baryonic, True, bw_adjust=bw_adjust)
-
-
-line1 = plotting.custom_line(c_dark_energy, '-.',lw=4)
-line2 = plotting.custom_line(c_bosonic, '--',lw=4)
-line3 = plotting.custom_line(c_fermionic, 'dotted',lw=4)
-line4 = plotting.double_interval_legend(c_baryonic)
-custom_lines = [line1, line2, line3, line4]
-labels = ['MCDF + Baryonic EoS', 'Bosonic ADM + Baryonic EoS', 'Fermionic ADM + Baryonic EoS', 'Baryonic EoS']
-loc = (0.01,0.68)
-axes.legend(custom_lines, labels, loc=loc, fontsize = 16, frameon=False)
-
-fig.savefig('plots/MTOV_vs_DeltaR.pdf', bbox_inches='tight')
-
-
-# In[ ]:
 
 
 
