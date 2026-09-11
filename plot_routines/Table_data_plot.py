@@ -68,27 +68,27 @@ root_name_FDM = script_dir / 'results' / 'posterior' / 'FDM' / 'Fermionic_poster
 
 
 #Dark energy 
-Dark_energy_table_data = np.loadtxt(root_name_DE + 'table_data.txt') # M_TOV, R_TOV, R_2, R_1.4
+Dark_energy_table_data = np.loadtxt(f'{root_name_DE}table_data.txt') # M_TOV, R_TOV, R_2, R_1.4
 Dark_energy_mtov = Dark_energy_table_data[:,0]
 Dark_energy_r14 =Dark_energy_table_data[:,2]
 Dark_energy_r2 = Dark_energy_table_data[:,3]
 Dark_energy_deltar = Dark_energy_r2 - Dark_energy_r14
 #Bosonic 
-Bosonic_table_data = np.loadtxt(root_name_BDM + 'table_data.txt')
+Bosonic_table_data = np.loadtxt(f'{root_name_BDM}table_data.txt')
 Bosonic_mtov = Bosonic_table_data[:,0]
 Bosonic_r14 =Bosonic_table_data[:,2]
 Bosonic_r2 = Bosonic_table_data[:,3]
 Bosonic_deltar = Bosonic_r2 - Bosonic_r14
 
 #Fermionic
-Fermionic_table_data = np.loadtxt(root_name_FDM + 'table_data.txt')
+Fermionic_table_data = np.loadtxt(f'{root_name_FDM}table_data.txt')
 Fermionic_mtov = Fermionic_table_data[:,0]
 Fermionic_r14 =Fermionic_table_data[:,2]
 Fermionic_r2 = Fermionic_table_data[:,3]
 Fermionic_deltar = Fermionic_r2 - Fermionic_r14
 
 #Baryonic
-Baryonic_table_data = np.loadtxt(root_name_B + 'table_data.txt') #full table data: M_TOV, R_TOV, eps_cent_TOV, rho_cent_TOV, P_cent_TOV, R_1.4,
+Baryonic_table_data = np.loadtxt(f'{root_name_B}table_data.txt') #full table data: M_TOV, R_TOV, eps_cent_TOV, rho_cent_TOV, P_cent_TOV, R_1.4,
                                                      #eps_cent_1.4, rho_cent_1.4, P_cent_1.4, R_2.0, eps_cent_2.0, rho_cent_2.0, P_cent_2.0.
 #Baryonic_table_data = Baryonic_table_data[:,[0,1,5,9]]
 

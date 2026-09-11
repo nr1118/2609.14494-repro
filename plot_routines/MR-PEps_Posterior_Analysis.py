@@ -1,13 +1,10 @@
-
-import matplotlib
 import numpy as np
-from matplotlib.lines import Line2D
-import matplotlib.patches as mpatches
-from matplotlib import pyplot as plt
+import matplotlib
+import matplotlib.pyplot as plt
+import corner as corner
 import seaborn as sns
 from scipy.stats import gaussian_kde
-from tqdm import tqdm
-from scipy.interpolate import interp1d, UnivariateSpline
+import matplotlib.patches as mpatches
 from matplotlib.colors import ListedColormap
 import os
 import pathlib
@@ -15,18 +12,24 @@ from pathlib import Path
 
 import argparse
 
-
-import plotting
-
-
 # In[2]:
 
 import global_imports
+
 c = global_imports._c
 G = global_imports._G
 Msun = global_imports._M_s
 pi = global_imports._pi
 rho_ns = global_imports._rhons
+
+
+# In[3]:
+
+
+import plotting
+
+
+
 
 
 parser = argparse.ArgumentParser()
@@ -47,14 +50,13 @@ c_bADM = ['xkcd:violet', 'xkcd:violet']
 c_fADM = ['xkcd:azure', 'xkcd:cobalt blue']
 
 
-# In[8]:
+# In[6]:
 
 
 plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 plt.rc('text', usetex=True)
 
-plt.rc('text', usetex=True)
-plt.rc('font', family='serif')
+
 
 plt.rcParams['xtick.direction'] = 'in'
 plt.rcParams['xtick.minor.visible'] = True
@@ -66,14 +68,13 @@ plt.rcParams['ytick.right'] = True
 plt.rcParams['xtick.top'] = True
 
 
-# In[9]:
 
 
 def calc_bands(x, y):
     miny = np.zeros((len(y),3))
     maxy = np.zeros((len(y),3))
     
-    for i in tqdm(range(len(y))):
+    for i in range(len(y)):
         z = y[i][y[i]>0.0]
         if len(z)<200:
             print('sample too small for %.2f' %x[i])
@@ -94,59 +95,58 @@ def calc_bands(x, y):
     return miny, maxy
 
 
-# In[10]:
 
 
-
-
-
-
-
-def mass_radius_prior_plot(root_name_DE,root_name_FDM,root_name_B, root_name_BDM,ax = None):
-    scatter_1 = np.loadtxt(root_name_DE + 'MR_prpr.txt')
+def mass_radius_posterior_plot(root_name_DE,root_name_BDM,root_name_B, root_name_FDM,ax = None):
+    scatter_1 = np.loadtxt(f'{root_name_DE}MR_prpr.txt')
 
     
-    
+
     sns.kdeplot(x = scatter_1[:,1], y = scatter_1[:,0], gridsize=40, 
                fill=False, ax=ax, levels=[0.05,1.],bw_adjust = 1.5,
-                alpha=1., colors = c_DE,linestyles = '-.',linewidths = 3.)
+                alpha=1., colors = '#E76F51',linestyles = '-.',linewidths = 3.)
 
     
-    scatter_2 = np.loadtxt(root_name_FDM + 'MR_prpr.txt')
+    scatter_2 = np.loadtxt(f'{root_name_BDM}MR_prpr.txt')
 
 
 
     
     sns.kdeplot(x = scatter_2[:,1], y = scatter_2[:,0], gridsize=40, 
                 fill=False, ax=ax, levels=[0.05,1.],bw_adjust = 1.5,
-                alpha=1., colors = c_fADM,linestyles = 'dotted',linewidths = 3.)
+                alpha=1., colors = 'xkcd:violet',linestyles = '--',linewidths = 3.)
 
-    scatter_3= np.loadtxt(root_name_B + 'MR_prpr.txt')
+    scatter_3= np.loadtxt(f'{root_name_B}MR_prpr.txt')
 
     
     sns.kdeplot(x = scatter_3[:,1], y = scatter_3[:,0], gridsize=40,bw_adjust = 1.5, 
                 fill=True, ax=ax, levels=[0.05,0.32,1.],
-                alpha=1., cmap=ListedColormap(c_baryonic))
+                alpha=1., cmap=ListedColormap(sns.cubehelix_palette(8, start=.5, rot=-.75, dark=.2, light=.85)[0::3]))
 
     # if root_name_4 is not None:
-    scatter_4 = np.loadtxt(root_name_BDM + 'MR_prpr.txt')
+    scatter_4 = np.loadtxt(f'{root_name_FDM}MR_prpr.txt')
+
     sns.kdeplot(x = scatter_4[:,1], y = scatter_4[:,0], gridsize=40, 
                 fill=False, ax=ax, levels=[0.05,1.],bw_adjust = 1.5,
-                alpha=1., colors = c_bADM,linestyles = '--',linewidths = 3.)
+                alpha=1., colors = 'xkcd:azure',linestyles = 'dotted',linewidths = 3.)
         
     
-    
-    ax.set_xlim(9, 15)
-    ax.set_xticks([10,11,12,13,14,15])
     ax.set_ylim(1., 2.7)
     ax.set_yticks([1.,1.4,1.8,2.2,2.7])
     
+    #ax.set_title('Mass-Radius Posteriors',font = 'serif',fontsize = 24)
     ax.minorticks_on()
     ax.tick_params(top=1,right=1, which='both', direction='in', labelsize=20)
     ax.set_xlabel(r'Radius [km]', fontsize=20)
     ax.set_ylabel(r'Mass [M$_{\odot}$]', fontsize=20)
-    
 
+
+
+
+root_name_DE = script_dir /'results'/ 'posterior' / 'DE' / 'Dark_energy_posterior_'
+root_name_BDM = script_dir /'results'/ 'posterior' / 'BDM' / 'Bosonic_posterior_'
+root_name_B = script_dir / 'results' / 'posterior' / 'B' / 'Baryonic_posterior_'
+root_name_FDM = script_dir / 'results' / 'posterior' / 'FDM' / 'Fermionic_posterior_'
 
 
 
@@ -169,36 +169,24 @@ ax = [
     fig.add_subplot(gs[1, 1:3])  # Bottom centered: spans cols 1 and 2
 ]
 
-root_name_DE = script_dir /'results'/ 'prior' / 'DE' / 'Dark_energy_prior_'
-root_name_BDM = script_dir /'results'/ 'prior' / 'BDM' / 'Bosonic_prior_'
-root_name_B = script_dir / 'results' / 'prior' / 'B' / 'Baryonic_prior_'
-root_name_FDM = script_dir / 'results' / 'prior' / 'FDM' / 'Fermionic_prior_'
-
-
-Baryonic_pressures_prior = np.load(root_name_B + 'pressures.npy')
-
-energydensities = np.logspace(14.2, 16, 50) #Taken from PosteriorAnalysis.py for the baryonic case
-Baryonic_pr_contours = calc_bands(energydensities,Baryonic_pressures_prior)
-B_minpres = np.log10(Baryonic_pr_contours[0])
-B_maxpres = np.log10(Baryonic_pr_contours[1])
-
-# Load Total EoS Arrays (from previous steps)
-DE_min_tot = np.log10(np.load(root_name_DE + 'minpres_total.npy'))
-DE_max_tot = np.log10(np.load(root_name_DE + 'maxpres_total.npy'))
-Bos_min_tot = np.log10(np.load(root_name_BDM + 'minpres.npy'))
-Bos_max_tot = np.log10(np.load(root_name_BDM + 'maxpres.npy'))
-Ferm_min_tot = np.log10(np.load(root_name_FDM + 'minpres.npy'))
-Ferm_max_tot = np.log10(np.load(root_name_FDM + 'maxpres.npy'))
+#Loading PP Baryonic EOS Arrays
+B_minpres = np.log10(np.load(f'{root_name_B}minpres.npy'))
+B_maxpres = np.log10(np.load(f'{root_name_B}maxpres.npy'))
+#Load the total combined EoS Arrays
+DE_min_tot = np.log10(np.load(f'{root_name_DE}minpres_total.npy'))
+DE_max_tot = np.log10(np.load(f'{root_name_DE}maxpres_total.npy'))
+Bos_min_tot = np.log10(np.load(f'{root_name_BDM}minpres_total.npy'))
+Bos_max_tot = np.log10(np.load(f'{root_name_BDM}maxpres_total.npy'))
+Ferm_min_tot = np.log10(np.load(f'{root_name_FDM}minpres.npy'))
+Ferm_max_tot = np.log10(np.load(f'{root_name_FDM}maxpres.npy'))
 
 # Load Baryonic EoS Arrays
-DE_min_bar = np.log10(np.load(root_name_DE + 'minpres_baryon.npy'))
-DE_max_bar = np.log10(np.load(root_name_DE + 'maxpres_baryon.npy'))
-Bos_min_bar = np.log10(np.load(root_name_BDM + 'minpres_baryon.npy'))
-Bos_max_bar = np.log10(np.load(root_name_BDM + 'maxpres_baryon.npy'))
-Ferm_min_bar = np.log10(np.load(root_name_FDM + 'minpres_baryon.npy'))
-Ferm_max_bar = np.log10(np.load(root_name_FDM + 'maxpres_baryon.npy'))
-
-
+DE_min_bar = np.log10(np.load(f'{root_name_DE}minpres_baryon.npy'))
+DE_max_bar = np.log10(np.load(f'{root_name_DE}maxpres_baryon.npy'))
+Bos_min_bar = np.log10(np.load(f'{root_name_BDM}minpres_baryon.npy'))
+Bos_max_bar = np.log10(np.load(f'{root_name_BDM}maxpres_baryon.npy'))
+Ferm_min_bar = np.log10(np.load(f'{root_name_FDM}minpres_baryon.npy'))
+Ferm_max_bar = np.log10(np.load(f'{root_name_FDM}maxpres_baryon.npy'))
 
 
 # ==========================================
@@ -230,20 +218,22 @@ line1 = plotting.custom_line(c_bADM[1], 'dashed', lw=4.)
 line2 = plotting.custom_line(c_fADM[0], 'dotted', lw=4.)
 line3 = plotting.custom_line(c_DE[0], '-.', lw=4.)
 line4 = plotting.double_interval_legend(c_baryonic)
-#line5 = plotting.custom_line('xkcd:black', )
+
+
 custom_lines = [line1, line2, line3, line4]
 ax[0].legend(custom_lines, ['Bosonic ADM + PP EoS', 'Fermionic ADM + PP EoS', 'MCDF + PP EoS','PP EoS'], loc='upper left', fontsize=18, frameon=False)
+
 
 
 # ==========================================
 # Mass-Radius posteriors
 # ==========================================
-mass_radius_prior_plot(root_name_DE, root_name_FDM, root_name_B, root_name_BDM, ax=ax[1])
+mass_radius_posterior_plot(root_name_DE, root_name_BDM, root_name_B, root_name_FDM, ax=ax[1])
 
 
 
-ax[1].set_xlim(6, 16)
-ax[1].set_xticks([6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
+ax[1].set_xlim(9, 15)
+ax[1].set_xticks([9, 10, 11, 12, 13, 14, 15])
 ax[1].set_ylim(1., 3.1)
 ax[1].set_yticks([1., 1.4, 1.8, 2.2, 2.6, 3.0])
 ax[1].minorticks_on()
@@ -280,34 +270,5 @@ ax[2].legend(loc='upper left', fontsize=18, frameon=False)
 
 
 plt.show()
-fig.savefig(plots_path / 'EoS_MR_priors_combined.pdf', bbox_inches='tight')
+fig.savefig(plots_path + 'EoS_MR_posteriors_combined.pdf', bbox_inches='tight')
 
-
-
-
-
-#Computing the maximum pressure prior distributions at the 95% confidence level of the total combined EOS (ADM + Baryonic) and the baryonic EOS alone, for both the bosonic and fermionic cases. This is done by interpolating the maximum pressure at the 95% confidence level (third column in the maxpres arrays) as a function of energy density (first column in the maxpres arrays) for each case.
-
-densities = np.log10(np.load(root_name_BDM + 'maxpres.npy'))[:,0] #all the same densities checked over
-Bos_max_tot = np.log10(np.load(root_name_BDM + 'maxpres.npy'))[:,2]
-Ferm_max_tot = np.log10(np.load(root_name_FDM + 'maxpres.npy'))[:,2]
-Ferm_max_bar = np.log10(np.load(root_name_FDM + 'maxpres_baryon.npy'))[:,2]
-Bos_max_bar = np.log10(np.load(root_name_BDM + 'maxpres_baryon.npy'))[:,2]
-
-
-log_interp_bosonic = UnivariateSpline(densities, Bos_max_tot, k=1, s=0)
-log_interp_bosonic_baryonic = UnivariateSpline(densities, Bos_max_bar, k=1, s=0)
-
-log_interp_fermionic = UnivariateSpline(densities, Ferm_max_tot, k=1, s=0)
-log_interp_fermionic_baryonic = UnivariateSpline(densities, Ferm_max_bar, k=1, s=0)
-
-maxpres_Baryonic = np.log10(Baryonic_pr_contours[1])
-
-
-log_interp_Baryonic = UnivariateSpline(maxpres_Baryonic[:,0], maxpres_Baryonic[:,2], k=1, s = 0, ext = 1)
-
-
-
-print('Baryonic pressure at 14.4 and 14.7:', log_interp_Baryonic(14.4), log_interp_Baryonic(14.7))
-print('Bosonic pressure at 14.4 and 14.7:', np.log10(10**log_interp_bosonic(14.4) - 10**log_interp_bosonic_baryonic(14.4)), np.log10(10**log_interp_bosonic(14.7) - 10**log_interp_bosonic_baryonic(14.7)))
-print('Fermionic pressure at 14.4 and 14.7:', np.log10(10**log_interp_fermionic(14.4) - 10**log_interp_fermionic_baryonic(14.4)), np.log10(10**log_interp_fermionic(14.7) - 10**log_interp_fermionic_baryonic(14.7)))

@@ -76,7 +76,8 @@ posterior_data_path = script_dir.parent / 'results'/'posterior'/'DE'/'Dark_energ
 
 prior_data_path = script_dir.parent / 'results'/'prior'/'DE'/'Dark_energy_prior_' if not args.repro else script_dir.parent / 'repro'/'Dark_energy_prior_'/'Dark_energy_prior_'
 
-tmp = np.loadtxt(prior_data_path + 'post_equal_weights.dat')
+
+tmp = np.loadtxt(f'{prior_data_path}post_equal_weights.dat')
 print('Generating the prior corner plot')
 
 
@@ -112,7 +113,7 @@ figure.savefig(plots_path / 'Prior_corner_dark_energy.pdf', bbox_inches='tight')
 
 print('Generating the posterior corner plot')
 
-ewposterior = np.loadtxt(posterior_data_path + 'post_equal_weights.dat')
+ewposterior = np.loadtxt(f'{posterior_data_path}post_equal_weights.dat')
 
 
 #A_param = tmp[:,5]
@@ -166,7 +167,7 @@ figure.savefig(plots_path / 'Posterior_prior_corner_dark_energy.pdf', bbox_inche
 
 bosonic_prior_data_path = script_dir.parent / 'results'/'prior'/'BDM'/'Bosonic_prior_' if not args.repro else script_dir.parent / 'repro'/'Bosonic_prior_'/'Bosonic_prior_'
 
-ewprior_bosonic = np.loadtxt(bosonic_prior_data_path + 'post_equal_weights.dat')
+ewprior_bosonic = np.loadtxt(f'{bosonic_prior_data_path}post_equal_weights.dat')
 
 
 
@@ -178,7 +179,7 @@ for i in range(len(ewprior_bosonic)):
 bosonic_posterior_data_path = script_dir.parent / 'results'/'posterior'/'BDM'/'Bosonic_posterior_' if not args.repro else script_dir.parent / 'repro'/'Bosonic_posterior_'/'Bosonic_posterior_'
 
 #ADM portion
-ewposterior_bosonic = np.loadtxt(bosonic_posterior_data_path + 'post_equal_weights.dat')
+ewposterior_bosonic = np.loadtxt(f'{bosonic_posterior_data_path}post_equal_weights.dat')
 
 
 
@@ -268,7 +269,7 @@ fig.savefig(plots_path / 'bosonic_adm_ratio_plot.pdf',bbox_inches='tight')
 
 fermionic_prior_data_path = script_dir.parent / 'results'/'prior'/'FDM'/'Fermionic_prior_' if not args.repro else script_dir.parent / 'repro'/'Fermionic_prior_'/'Fermionic_prior_'
 
-ewprior_fermionic = np.loadtxt(fermionic_prior_data_path + 'post_equal_weights.dat')
+ewprior_fermionic = np.loadtxt(f'{fermionic_prior_data_path}post_equal_weights.dat')
 
 
 
@@ -280,7 +281,7 @@ for i in range(len(ewprior_fermionic)):
 
 fermionic_posterior_data_path = script_dir.parent / 'results'/'posterior'/'FDM'/'Fermionic_posterior_' if not args.repro else script_dir.parent / 'repro'/'Fermionic_posterior_'/'Fermionic_posterior_'
 
-ewposterior_fermionic = np.loadtxt(fermionic_posterior_data_path + 'post_equal_weights.dat')
+ewposterior_fermionic = np.loadtxt(f'{fermionic_posterior_data_path}post_equal_weights.dat')
 
 
 # mchi = ewposterior[:,5]
