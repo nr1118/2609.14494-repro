@@ -1,6 +1,5 @@
-# 260X.XXXX-repro
-Reproduction Package for the upcoming paper, titled ``NICER neutron stars with dark energy and dark matter: effects on the inferred equation of state" by Rutherford, Prescod-Weinstein, and Watts 2026 [arXiv preprint to be released on 9/14/26].
-
+# 2609.14494-repro (Rutherford et al. 2026)
+Reproduction Package for the upcoming paper, titled ``NICER neutron stars with dark energy and dark matter: effects on the inferred equation of state" by Rutherford, Prescod-Weinstein, and Watts 2026 [arXix:2609.14494](https://arxiv.org/abs/2609.14494)
 
 
 
@@ -12,7 +11,7 @@ REQUIREMENTS
 ============
 To reproduce our data and plots, the following additional requirements apply (see also NEoST installation instructions):
 
-  - [neost version 3.0.0](https://github.com/xpsi-group/neost/tree/Dark_Energy_Adaptation). Note, this reproduction package also contains the latest version of the branch as of 9/10/26 for your convenience. See the Dark_Energy_Adaptation directory.
+  - [neost version 3.0.0](https://github.com/xpsi-group/neost/tree/Dark_Energy_Adaptation). Note, this reproduction package also contains the latest version of the branch as of 9/10/26 for your convenience. See the `Dark_Energy_Adaptation` directory.
   - cython
   - pymultinest
   - gsl
@@ -24,7 +23,7 @@ To reproduce our data and plots, the following additional requirements apply (se
   - corner
   - numba (optional)
 
-Here, Numba is only needed to use the Python TOV solvers. However, normally the much faster Cython TOV solvers should be used (see [https://xpsi-group.github.io/neost/index.html](https://xpsi-group.github.io/neost/index.html) for details).  The Dark_Energy_Adaptation (i.e., NEoST version 3.0.0) is a substantially modified version of NEoST version 2.2.0, as it includes additional functionality to compute neutron stars composed of a MCDF dark energy core and a purely baryonic outer shell surrounding that core. 
+Here, Numba is only needed to use the Python TOV solvers. However, normally the much faster Cython TOV solvers should be used (see [https://xpsi-group.github.io/neost/index.html](https://xpsi-group.github.io/neost/index.html) for details).  The `Dark_Energy_Adaptation` (i.e., NEoST version 3.0.0) is a substantially modified version of NEoST version 2.2.0, as it includes additional functionality to compute neutron stars composed of a MCDF dark energy core and a purely baryonic outer shell surrounding that core. 
 
 NEoST v 3.0.0 - `Dark_Energy_Adaptation` branch
 ====================================================
@@ -43,16 +42,16 @@ Everything in the base repository of NEoST, i.e., the chiral EFT models, the hig
 
 REPRODUCING PLOTS
 =================
-All figures in the paper can be reproduced by going to the plot_routines/ directory and running each python script within the directory. Note, if reproducing the plots via the plot_routines/ directory, the neost conda enviroment must be activated. Refer to this script and the called plot scripts in plot_routines/ for a complete account of all options available. The output of the plot_routines/ directory goes directory to the plots/ directory. Moreover, some of the scripts in the plots_routines/ directory pull from the data/ directory, which contains the posterior samples of [J0740](https://arxiv.org/abs/2406.14466), [J0437](https://arxiv.org/abs/2407.06789), and [J0030](https://arxiv.org/abs/2308.09469), which are used in the posterior run_scripts.
+All figures in the paper can be reproduced by going to the `plot_routines/` directory and running each python script within the directory. Note, if reproducing the plots via the `plot_routines/` directory, the neost conda enviroment must be activated. Refer to this script and the called plot scripts in `plot_routines/` for a complete account of all options available. The output of the `plot_routines/` directory goes directory to the `plots/` directory. Moreover, some of the scripts in the `plots_routines/` directory pull from the `data/` directory, which contains the posterior samples (and 68% and 95% contour files for plotting) of [J0740](https://arxiv.org/abs/2406.14466), [J0437](https://arxiv.org/abs/2407.06789), and [ST+PDT J0030](https://arxiv.org/abs/2308.09469), which are used in the posterior run scripts and the `Sources_plot.py`.
 
-The most important option is the -r (--repro) flag, which all scripts recognize. By default, generate_figs.sh uses data supplied in the results/ directory---which contains the results published in the paper---to produce figures. The -r flag tells the plot scripts to instead use user-generated data in the repro/ directory. 
+The most important option is the -r (--repro) flag, which all scripts recognize. By default, the plot routines use the data supplied in the `results/` directory, which contains the results published in the paper, to produce figures. The -r flag tells the plot scripts to instead use user-generated data in the `repro/` directory. 
 
 
 
 
  RUN SCRIPTS
 ===========
-The run scripts for all prior and posterior inference calculations can be found in the run_scripts/ directory and can be used to reproduce all of the results in the paper. You need to adapt these scripts if you want to use them with custom run names and/or output directories. These scripts automatically place the results in the `repro/` directory. Furthermore, if you wish to use the plotting scripts with these runs, they must be in the `repro/` directory. The overall structure of the `run_scripts` folder is as follows:
+The run scripts for all prior and posterior inference calculations can be found in the `run_scripts/` directory and can be used to reproduce all of the results in the paper. You need to adapt these scripts if you want to use them with custom run names and/or output directories. These scripts automatically place the results in the `repro/` directory. Furthermore, if you wish to use the plotting scripts with these runs, they must be in the `repro/` directory. The overall structure of the `run_scripts/` folder is as follows:
 
 - `run_scripts/posterior`: All posterior script files
 
